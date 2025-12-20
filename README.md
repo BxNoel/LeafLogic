@@ -6,17 +6,17 @@
 
 ## 🚀 Getting Started (Local Development)
 
-### Prerequisites
-
-- Node.js (v18+ recommended)
-- npm
-
----
-
 ### Run Locally
 
 ```bash
 npm install
 npm run dev
 ```
+---
 
+### Build and Deploy
+1) First you must increase the version by 1 in `manifest.json`.
+2) run `git commit` and `git push` all your changed to main
+3) run `npm run build`. This would creat a dist folder
+4) Go to `chrome://extensions` in Google Chrome and enable **Developer mode**.
+5) Then click **Load unpacked** and select the `dist/` folder. The add-on should be ready for testing!

@@ -1,32 +1,49 @@
-import { useEffect, useState } from 'react';
-import './App.css';
+import styled, { createGlobalStyle } from "styled-components";
+import { UsageChart } from "./assets/UsageChart";
+import {EnviormentalImpact} from "./assets/EnviormentalImpact";
+
+const GlobalStyle = createGlobalStyle`
+  html, body, #root {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+  }
+  *, *::before, *::after {
+    box-sizing: inherit;
+  }
+`;
+
+const PageWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;              
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 0.5rem;
+  min-width: 500px;
+`;
 
 function App() {
-  const [promptCount, setPromptCount] = useState(0);
-
-  useEffect(() => {
-    // Guard for non-extension environments
-    if (!chrome?.storage?.local) return;
-
-    // Initial load
-    chrome.storage.local.get(['promptCount'], (res) => {
-      setPromptCount(res.promptCount ?? 0);
-    });
-
-    // Live updates
-    const onChanged = (changes, area) => {
-      if (area !== 'local') return;
-      if (changes.promptCount) setPromptCount(changes.promptCount.newValue ?? 0);
-    };
-    chrome.storage.onChanged.addListener(onChanged);
-    return () => chrome.storage.onChanged.removeListener(onChanged);
-  }, []);
-
+  const data = [
+    { time: 'SUN', usage: 2 },
+    { time: 'MON', usage: 5 },
+    { time: 'TUE', usage: 1 },
+    { time: 'WED', usage: 7 },
+    { time: 'THU', usage: 3 },
+    { time: 'FRI', usage: 6 },
+    { time: 'SAT', usage: 4 },
+  ];
 
   return (
     <>
-      <h1>Hi Noel was Here</h1>
-      <p>Prompts this week: {promptCount}</p>
+      <GlobalStyle />
+      <PageWrapper>
+        <EnviormentalImpact carbonSaved={250} />
+        <UsageChart data={data} />
+      </PageWrapper>
     </>
   );
 }

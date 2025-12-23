@@ -1,14 +1,25 @@
 // Confirming script injection
 console.log("LeafLogic content script loaded");
+const day = getDayOfWeek();
+console.log(`Today is ${day}`);
 
-function injectFetchHook() {
-  const script = document.createElement("script");
-  script.src = chrome.runtime.getURL("pageFetchHook.js");
-  script.type = "text/javascript";
-  script.onload = () => script.remove();
-  (document.head || document.documentElement).appendChild(script);
-}
 injectFetchHook();
+// Function to increment prompt count in chrome storage
+function incrementPromptCount() {
+  const day = getDayOfWeek();
+  const DAY_KEY = `${day}_promptCount`;
+
+  chrome.storage.local.get(["promptCount", DAY_KEY], (res) => {
+    const TOTAL_PROMPT_COUNT = (res.promptCount || 0) + 1;
+    const DAY_PROMPT_COUNT = (res[DAY_KEY] || 0) + 1;
+
+    chrome.storage.local.set({
+      promptCount: TOTAL_PROMPT_COUNT,
+      [DAY_KEY]: DAY_PROMPT_COUNT
+    });
+  });
+}
+
 console.log("safelt injected fetch hook");  
 // indicating that a prompt has been sent.
 window.addEventListener("message", (event) => {
@@ -16,16 +27,10 @@ window.addEventListener("message", (event) => {
     incrementPromptCount();
   }
 });
-// Function to increment prompt count in chrome storage
-function incrementPromptCount() {
-  chrome.storage.local.get(["promptCount"], (result) => {
-    const currentCount = result.promptCount || 0;
-    const newCount = currentCount + 1;
-    chrome.storage.local.set({ promptCount: newCount });
-  });
-}
 
-//Use this later to cache prompts to certaint links
+//Use this later to cache prompts to certaint links. We dont really need to make a new anything here for us, 
+// This will be handled by the popup when we want to view saved prompts for certain links.
+// Need to think of a way to limit it to just 100 tho...
 // [PROMPT] --> [CHAT_URL]
 let activeInput = null;
 document.addEventListener("focusin", (e) => {

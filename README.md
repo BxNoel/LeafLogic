@@ -14,7 +14,7 @@ npm run dev
 ```
 ---
 
-### Build and Deploy
+### Build and Test
 1) First you must increase the version by 1 in `manifest.json`.
 2) run `git commit` and `git push` all your changed to main
 3) run `npm run build`. This would creat a dist folder

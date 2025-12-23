@@ -11,8 +11,16 @@
       {
         "matches": ["https://chat.openai.com/*",
                     "https://chatgpt.com/*"],
-        "js": ["content.js"]
+        "js": ["content.js"],
+        "run_at": "document_idle"
       }
-    ]
+    ],
+    "web_accessible_resources": [
+    {
+      "resources": ["pageFetchHook.js"],
+      "matches": ["https://chatgpt.com/*",
+                  "https://chat.openai.com/*"]
+    }
+  ]
   }
   

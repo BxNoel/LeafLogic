@@ -16,7 +16,7 @@
           );
         }
       } catch (e) {
-        // swallow errors
+        console.error("Error in fetch hook:", e);
       }
   
       return originalFetch.apply(this, args);

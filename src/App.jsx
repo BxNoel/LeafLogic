@@ -106,8 +106,6 @@ function App() {
 
   // Caclaulte Carbon Emission from Total Queries in wh
   const TotalEnergy_kWh = Number((TotalQueries * 0.34).toFixed(2));
-
-  
   return (
     <>
       <GlobalStyle />

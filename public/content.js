@@ -1,7 +1,6 @@
 // Confirming script injection
 console.log("LeafLogic content script loaded");
 const day = getDayOfWeek();
-console.log(`Today is ${day}`);
 
 injectFetchHook();
 // Function to increment prompt count in chrome storage
@@ -36,17 +35,34 @@ window.addEventListener("message", (event) => {
 // [PROMPT] --> [CHAT_URL]
 let activeInput = null;
 document.addEventListener("focusin", (e) => {
-  const el = e.target;
-  if (el && el.id === "prompt-textarea") {
-    activeInput = el;
-    console.log("ChatGPT input focused");
+  const HTML_ELEMENT = e.target;
+  if (HTML_ELEMENT && HTML_ELEMENT.id === "prompt-textarea") {
+    activeInput = HTML_ELEMENT;
+    if (!HTML_ELEMENT.__llBound) {
+      HTML_ELEMENT.__llBound = true;
+      HTML_ELEMENT.addEventListener("input", () => {
+        const text = HTML_ELEMENT.textContent?.trim() || "";
+        // SEND THIS MESSAGE to catch in react app  --> window.postMessage({ type: "LEAFLOGIC_INPUT_UPDATE", text }, "*");
+      });
+    }
   }
 });
-document.addEventListener("keydown", (e) => {
+
+document.addEventListener("keydown", async (e) => {
   if (!activeInput) return;
+  //Should allow for new-line char inserts with shift+enter
+  if (e.key === "Enter" && e.shiftKey) return;
   if (e.key === "Enter" && !e.shiftKey) {
     const text = activeInput.innerText.trim();
     if (text.length === 0) return;
     console.log("Prompt submitted:", text);
+    //TODO: Cache the prompt with the current chat URL into local storage
+    const URL = await getStableChatUrl();
+    let PROMPT = text;
+    try {
+      cachePrompt(PROMPT, URL);
+    } catch (err) {
+      console.debug("Storage update skipped:", err);
+    }
   }
 });

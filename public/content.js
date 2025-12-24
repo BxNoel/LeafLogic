@@ -5,19 +5,21 @@ console.log(`Today is ${day}`);
 
 injectFetchHook();
 // Function to increment prompt count in chrome storage
-function incrementPromptCount() {
+async function incrementPromptCount() {
+  if (!chrome.runtime?.id) return;
   const day = getDayOfWeek();
   const DAY_KEY = `${day}_promptCount`;
-
-  chrome.storage.local.get(["promptCount", DAY_KEY], (res) => {
+  try {
+    const res = await chrome.storage.local.get(["promptCount", DAY_KEY]);
     const TOTAL_PROMPT_COUNT = (res.promptCount || 0) + 1;
     const DAY_PROMPT_COUNT = (res[DAY_KEY] || 0) + 1;
-
-    chrome.storage.local.set({
+    await chrome.storage.local.set({
       promptCount: TOTAL_PROMPT_COUNT,
       [DAY_KEY]: DAY_PROMPT_COUNT
     });
-  });
+  } catch (err) {
+    console.debug("Storage update skipped:", err);
+  }
 }
 
 console.log("safelt injected fetch hook");  
